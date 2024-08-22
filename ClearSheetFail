@@ -1,0 +1,42 @@
+<#The code below is stripped down from a script that pulls data from Excel to build new users in AD and a script that licenses the users in o365.
+The columns are First, Last, Title, Department, DuckCreek, and Username
+
+Export-Excel works to place the username back in the workbook.
+
+When that script is done, I want to clear the worksheet for the next round of new hires.  See the error below.
+#>
+
+# Import modules
+
+Import-Module -Name ImportExcel
+
+
+# Store the data from New User.xlsm in the $ADUsers variable
+$ADUsers = ""
+$ADUsers = Import-Excel "PathTo\New User.xlsm" -WorkSheetname NewVFUser
+#$data | Export-Excel -Path "\\vffs2019\public\forms\it request forms\New User.xlsm" -WorkSheetname NewVFUser -ClearSheet
+# Define UPN
+
+# Loop through each row containing user details in the CSV file
+foreach ($User in $ADUsers) {
+
+    #Calculate username rather than capturing it.
+
+    $username = $User.Last + $User.First
+    $username = $username.ToLower()
+
+} # End For Each
+
+$ADUsers  | Export-Excel -Path "PathTo\New User.xlsm" -WorkSheetname NewVFUser
+
+Write-Host $ADUsers
+<#
+When I first implemented the command below, it worked.  Now I recieve:
+Exception: C:\Users\hillt\Documents\PowerShell\Modules\ImportExcel\7.8.6\Public\Export-Excel.ps1:137:17
+Line |
+ ### |          catch { throw "Could not get worksheet $WorksheetName" }
+     |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Could not get worksheet NewVFUser 
+#>
+    
+$data | Export-Excel -Path "PathTo\New User.xlsm" -WorkSheetname NewVFUser -ClearSheet
